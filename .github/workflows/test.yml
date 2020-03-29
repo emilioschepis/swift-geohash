@@ -1,0 +1,14 @@
+name: Test
+
+on:
+  push:
+    branches: [ master, develop ]
+
+jobs:
+  test:
+    container:
+      image: swift:5.2-bionic
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - run: swift test --enable-test-discovery --sanitize=thread
