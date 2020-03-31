@@ -35,7 +35,7 @@ try Geohash.encode(latitude: 57.6, longitude: 10.4, precision: .high) // "u4prst
 ```
 
 ```swift
-try Geohash.encode(latitude: 57.6, longitude: 10.4, precision: .custom(9)) // "u4prstv"
+try Geohash.encode(latitude: 57.6, longitude: 10.4, precision: .custom(9)) // "u4prstv03"
 ```
 
 ## Resources
