@@ -3,6 +3,9 @@
 /// # Reference:
 /// [Geohash algorithm](https://en.wikipedia.org/wiki/Geohash)
 public enum GeohashError: Error {
+    /// Thrown when the input string is empty.
+    case emptyInput
+    
     /// Thrown when the string contains invalid characters.
     ///
     /// Valid characters are all numbers and all lowercase letters except for *a*, *i*, *l*, *o*.

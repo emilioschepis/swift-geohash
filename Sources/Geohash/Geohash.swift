@@ -31,6 +31,10 @@ public struct Geohash {
         
         var even = true
         
+        guard !hash.isEmpty else {
+            throw GeohashError.emptyInput
+        }
+        
         for character in hash {
             guard let index = values.firstIndex(of: character) else {
                 throw GeohashError.invalidCharacters

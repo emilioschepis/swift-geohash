@@ -17,6 +17,17 @@ final class GeohashTests: XCTestCase {
         XCTAssertEqual(bounds.lower.longitude, 10.40740, accuracy: 0.001)
     }
     
+    func testBoundsThrowsWhenHashEmpty() {
+        let hash = ""
+        
+        XCTAssertThrowsError(
+            try Geohash.bounds(for: hash),
+            "Should not decode empty hashes."
+        ) { error in
+            XCTAssertEqual(error as? GeohashError, GeohashError.emptyInput)
+        }
+    }
+    
     func testBoundsThrowsWhenCharacterInvalid() {
         let hash = "aaaaa" // The "a" character is invalid
         
@@ -37,6 +48,17 @@ final class GeohashTests: XCTestCase {
         
         XCTAssertEqual(coordinates.latitude, 57.64911, accuracy: 0.001)
         XCTAssertEqual(coordinates.longitude, 10.40744, accuracy: 0.001)
+    }
+    
+    func testDecodeThrowsWhenHashEmpty() {
+        let hash = ""
+        
+        XCTAssertThrowsError(
+            try Geohash.decode(hash),
+            "Should not decode empty hashes."
+        ) { error in
+            XCTAssertEqual(error as? GeohashError, GeohashError.emptyInput)
+        }
     }
     
     func testDecodeThrowsWhenCharacterInvalid() {
