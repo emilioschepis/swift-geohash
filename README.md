@@ -13,12 +13,17 @@ Distributed through Swift Package Manager.
 // ...
 dependencies: [
     // ...
-    .package(url: "https://github.com/emilioschepis/swift-geohash.git", from: "1.0.0"),
+    .package(url: "https://github.com/emilioschepis/swift-geohash.git", from: "1.1.0"),
 ]
 // ...
 ```
 
 ## Methods
+
+### Bounds
+```swift
+try Geohash.bounds(of: "u4pruydqq") // ((57.64908..., 10.40740...), (57.64912..., 10.40744...))
+```
 
 ### Decode
 ```swift
@@ -36,6 +41,15 @@ try Geohash.encode(latitude: 57.6, longitude: 10.4, precision: .high) // "u4prst
 
 ```swift
 try Geohash.encode(latitude: 57.6, longitude: 10.4, precision: .custom(9)) // "u4prstv03"
+```
+
+### Neighbors
+```swift
+try Geohash.neighbor(of: "u4prs", direction: .north) // "u4r2h"
+```
+
+```swift
+try Geohash.neighbors(of: "u4prs") // "u4r2h", "u4r2j", "u4prv"...
 ```
 
 ## Resources
