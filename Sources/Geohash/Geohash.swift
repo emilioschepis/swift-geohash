@@ -8,10 +8,10 @@ public struct Geohash {
     
     // MARK: - Public methods
     
-    /// Transforms a string into coordinates through the Geohash algorithm.
+    /// Transforms a string into bounds through the Geohash algorithm.
     ///
-    /// A longer string results in more accurate coordinates.
-    /// This methods returns the center point of the calculated bounding box.
+    /// A longer string results in smaller bounds.
+    /// This methods returns the upper and lower values of the bound.
     /// The string must be a set of valid characters (all numbers and all lowercase letters except for *a*,
     /// *i*, *l*, *o*).
     ///
@@ -21,16 +21,16 @@ public struct Geohash {
     /// - Parameter hash: the string to decode.
     /// - Throws: `GeohashError.invalidCharacters` when the string
     /// contains invalid characters.
-    /// - Returns: Latitude and longitude for the given string.
-    public static func decode(_ hash: String) throws -> (
-        latitude: Double,
-        longitude: Double
+    /// - Returns: Bounds for the given string.
+    public static func bounds(for hash: String) throws -> (
+        lower: (latitude: Double, longitude: Double),
+        upper: (latitude: Double, longitude: Double)
     ) {
         var latitudeRange = (lower: -90.0, upper: 90.0)
         var longitudeRange = (lower: -180.0, upper: 180.0)
-
+        
         var even = true
-
+        
         for character in hash {
             guard let index = values.firstIndex(of: character) else {
                 throw GeohashError.invalidCharacters
@@ -61,8 +61,34 @@ public struct Geohash {
         }
         
         return (
-            latitude: (latitudeRange.upper + latitudeRange.lower) / 2,
-            longitude: (longitudeRange.upper + longitudeRange.lower) / 2
+            lower: (latitudeRange.lower, longitudeRange.lower),
+            upper: (latitudeRange.upper, longitudeRange.upper)
+        )
+    }
+    
+    /// Transforms a string into coordinates through the Geohash algorithm.
+    ///
+    /// A longer string results in more accurate coordinates.
+    /// This methods returns the center point of the calculated bounding box.
+    /// The string must be a set of valid characters (all numbers and all lowercase letters except for *a*,
+    /// *i*, *l*, *o*).
+    ///
+    /// # Reference:
+    /// [Geohash algorithm](https://en.wikipedia.org/wiki/Geohash)
+    ///
+    /// - Parameter hash: the string to decode.
+    /// - Throws: `GeohashError.invalidCharacters` when the string
+    /// contains invalid characters.
+    /// - Returns: Latitude and longitude for the given string.
+    public static func decode(_ hash: String) throws -> (
+        latitude: Double,
+        longitude: Double
+    ) {
+        let bounds = try Self.bounds(for: hash)
+        
+        return (
+            latitude: (bounds.upper.latitude + bounds.lower.latitude) / 2,
+            longitude: (bounds.upper.longitude + bounds.lower.longitude) / 2
         )
     }
     
@@ -111,7 +137,7 @@ public struct Geohash {
                     longitudeRange.upper = average
                 }
             } else {
-               let average = (latitudeRange.0 + latitudeRange.1) / 2
+                let average = (latitudeRange.0 + latitudeRange.1) / 2
                 if latitude >= average {
                     latitudeRange.lower = average
                     index |= bit
