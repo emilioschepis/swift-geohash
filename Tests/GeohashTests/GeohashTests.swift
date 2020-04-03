@@ -8,7 +8,7 @@ final class GeohashTests: XCTestCase {
     func testBounds() throws {
         let hash = "u4pruydqq"
         
-        let bounds = try Geohash.bounds(for: hash)
+        let bounds = try Geohash.bounds(of: hash)
         
         XCTAssertEqual(bounds.upper.latitude, 57.64912, accuracy: 0.001)
         XCTAssertEqual(bounds.lower.latitude, 57.64908, accuracy: 0.001)
@@ -21,7 +21,7 @@ final class GeohashTests: XCTestCase {
         let hash = ""
         
         XCTAssertThrowsError(
-            try Geohash.bounds(for: hash),
+            try Geohash.bounds(of: hash),
             "Should not decode empty hashes."
         ) { error in
             XCTAssertEqual(error as? GeohashError, GeohashError.emptyInput)
@@ -32,7 +32,7 @@ final class GeohashTests: XCTestCase {
         let hash = "aaaaa" // The "a" character is invalid
         
         XCTAssertThrowsError(
-            try Geohash.bounds(for: hash),
+            try Geohash.bounds(of: hash),
             "Should not decode invalid characters."
         ) { error in
             XCTAssertEqual(error as? GeohashError, GeohashError.invalidCharacters)
@@ -105,6 +105,94 @@ final class GeohashTests: XCTestCase {
             "Should not encode invalid coordinates."
         ) { error in
             XCTAssertEqual(error as? GeohashError, GeohashError.invalidCoordinates)
+        }
+    }
+    
+    // MARK: - Neighbors tests
+    
+    func testNeighbor() throws {
+        let hash = "u4pru"
+        
+        let neighbor = try Geohash.neighbor(of: hash, direction: .north)
+        
+        XCTAssertEqual(neighbor, "u4r2h")
+    }
+    
+    func testNeighborThrowsWhenHashEmpty() {
+        let hash = ""
+        
+        XCTAssertThrowsError(
+            try Geohash.neighbor(of: hash, direction: .north),
+            "Should not decode empty hashes."
+        ) { error in
+            XCTAssertEqual(error as? GeohashError, GeohashError.emptyInput)
+        }
+    }
+    
+    func testNeighborThrowsWhenCharacterInvalid() {
+        let hash = "aaaaa" // The "a" character is invalid
+        
+        XCTAssertThrowsError(
+            try Geohash.neighbor(of: hash, direction: .north),
+            "Should not decode invalid characters."
+        ) { error in
+            XCTAssertEqual(error as? GeohashError, GeohashError.invalidCharacters)
+        }
+    }
+    
+    func testNeighbors() throws {
+        let hash = "u4pru"
+        
+        let neighbors = try Geohash.neighbors(of: hash)
+        
+        XCTAssertEqual(neighbors, [
+            "u4r2h", // n
+            "u4r2j", // ne
+            "u4prv", // e
+            "u4prt", // se
+            "u4prs", // s
+            "u4pre", // sw
+            "u4prg", // w
+            "u4r25", // nw
+        ])
+    }
+    
+    func testNeighborsEdgeCase() throws {
+        let hash = "u0000"
+        
+        let neighbors = try Geohash.neighbors(of: hash)
+        
+        XCTAssertEqual(neighbors, [
+            "u0002", // n
+            "u0003", // ne
+            "u0001", // e
+            "spbpc", // se
+            "spbpb", // s
+            "ezzzz", // sw
+            "gbpbp", // w
+            "gbpbr", // nw
+        ])
+    }
+    
+    func testNeighborsThrowsWhenHashEmpty() {
+        let hash = ""
+        
+        XCTAssertThrowsError(
+            try Geohash.neighbors(of: hash),
+            "Should not decode empty hashes."
+        ) { error in
+            XCTAssertEqual(error as? GeohashError, GeohashError.emptyInput)
+        }
+    }
+    
+    func testNeighborsThrowsWhenCharacterInvalid() {
+        let hash = "aaaaa" // The "a" character is invalid
+        
+        XCTAssertThrowsError(
+            try Geohash.neighbors(of: hash),
+            "Should not decode invalid characters."
+        ) { error in
+            XCTAssertEqual(error as? GeohashError, GeohashError.invalidCharacters)
         }
     }
 }
