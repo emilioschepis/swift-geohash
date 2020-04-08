@@ -145,6 +145,8 @@ final class GeohashTests: XCTestCase {
         
         let neighbors = try Geohash.neighbors(of: hash)
         
+        XCTAssertEqual(neighbors.count, 8)
+        XCTAssertFalse(neighbors.contains(hash))
         XCTAssertEqual(neighbors, [
             "u4r2h", // n
             "u4r2j", // ne
@@ -154,6 +156,26 @@ final class GeohashTests: XCTestCase {
             "u4pre", // sw
             "u4prg", // w
             "u4r25", // nw
+        ])
+    }
+    
+    func testNeighborsIncludingCenter() throws {
+        let hash = "u4pru"
+        
+        let neighbors = try Geohash.neighbors(of: hash, includingCenter: true)
+        
+        XCTAssertEqual(neighbors.count, 9)
+        XCTAssertTrue(neighbors.contains(hash))
+        XCTAssertEqual(neighbors, [
+            "u4r2h", // n
+            "u4r2j", // ne
+            "u4prv", // e
+            "u4prt", // se
+            "u4prs", // s
+            "u4pre", // sw
+            "u4prg", // w
+            "u4r25", // nw
+            "u4pru", // center
         ])
     }
     

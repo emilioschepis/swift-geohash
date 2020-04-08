@@ -182,22 +182,24 @@ public struct Geohash {
     /// Calculates the hashes of all neighbors for a given hash.
     ///
     /// The neighbors are returned in clockwise order.
+    /// If the center is included it is returned as the last element.
     ///
     /// 7 0 1
     ///
-    /// 6 X 2
+    /// 6 8 2
     ///
     /// 5 4 3
     ///
     /// - Parameter hash: the original hash.
+    /// - Parameter includingCenter: whether or not the source hash is included in the neighbors.
     /// - Throws: `GeohashError.invalidCharacters` when the string
     /// contains invalid characters.
     /// - Returns: The hashes of the calculated neighbors.
-    public static func neighbors(of hash: String) throws -> [String] {
+    public static func neighbors(of hash: String, includingCenter: Bool = false) throws -> [String] {
         let bounds = try Self.bounds(of: hash)
         let precision = Precision.custom(value: hash.count)
         
-        return [
+        var neighbors = [
             try neighbor(from: bounds,
                          direction: .north,
                          precision: precision),
@@ -223,6 +225,12 @@ public struct Geohash {
                          direction: .northWest,
                          precision: precision),
         ]
+        
+        if includingCenter {
+            neighbors.append(hash)
+        }
+        
+        return neighbors
     }
     
     // MARK: - Private methods
