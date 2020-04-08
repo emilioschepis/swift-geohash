@@ -13,7 +13,7 @@ Distributed through Swift Package Manager.
 // ...
 dependencies: [
     // ...
-    .package(url: "https://github.com/emilioschepis/swift-geohash.git", from: "1.1.0"),
+    .package(url: "https://github.com/emilioschepis/swift-geohash.git", from: "1.2.0"),
 ]
 // ...
 ```
@@ -50,6 +50,10 @@ try Geohash.neighbor(of: "u4prs", direction: .north) // "u4r2h"
 
 ```swift
 try Geohash.neighbors(of: "u4prs") // "u4r2h", "u4r2j", "u4prv"...
+```
+
+```swift
+try Geohash.neighbors(of: "u4prs", includingCenter: true) // "u4r2h", "u4r2j", "u4prv"... "u4prs"
 ```
 
 ## Resources
